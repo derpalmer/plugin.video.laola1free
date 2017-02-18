@@ -162,7 +162,7 @@ class BlockHandler(RequestHandler):
 class VideoHandler(RequestHandler):
 	def handle(self):
 		try:
-			stream = Stream(self.url)
+			stream = Stream(self.url, self.settings)
 			#print 'Playlist: ' + stream.get_playlist()
 			li = xbmcgui.ListItem(path=stream.get_url())
 			li.setInfo( type="Video", infoLabels={ "Title": stream.get_title() } )

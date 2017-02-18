@@ -14,6 +14,9 @@ class Extractor:
 		self.settings = settings
 
 	def get_soup(self):
+		proxy = urllib2.ProxyHandler({'http': self.settings.proxyserver()})
+		opener = urllib2.build_opener(proxy)
+		urllib2.install_opener(opener)
 		source = urllib2.urlopen(self.baseurl)
 		return BeautifulSoup(source, 'html.parser')
 

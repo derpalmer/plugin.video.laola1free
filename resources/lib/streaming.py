@@ -14,9 +14,10 @@ class StreamError(Exception):
 		self.message = message
 
 class Stream:
-	def __init__(self, url, min_bandwidth = 0, max_bandwidth = 999999999):
+	def __init__(self, url, settings, min_bandwidth = 0, max_bandwidth = 999999999):
 		self.min_bandwidth = min_bandwidth
 		self.max_bandwidth = max_bandwidth
+		self.settings = settings
 
 		logger.info('Get videoplayer url from "{}"', url)
 		url = self.get_videoplayer_url(url)
@@ -27,6 +28,9 @@ class Stream:
 		logger.debug('Playlist url is "{}"', self.url)
 
 	def get_soup(self, url):
+		proxy = urllib2.ProxyHandler({'http': self.settings.proxyserver(), 'https': self.settings.proxyserver()})
+		opener = urllib2.build_opener(proxy)
+		urllib2.install_opener(opener)
 		source = urllib2.urlopen(url)
 		soup = BeautifulSoup(source, 'html.parser')
 		soup.current_url = source.geturl()
@@ -71,7 +75,7 @@ class Stream:
 
 		hdvideourl = 'http://www.laola1.tv/server/hd_video.php?play='+streamid+'&partner='+partnerid+'&portal='+portalid+'&v5ident=&lang='+sprache
 
-		logger.debug('hd_video url is "{}"', hdvideourl) 
+		logger.debug('hd_video url is "{}"', hdvideourl)
 		soup = self.get_soup(hdvideourl)
 
 		return soup.videoplayer.url.text +'&timestamp='+timestamp+'&auth='+auth
